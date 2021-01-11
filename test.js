@@ -1,11 +1,12 @@
+require('dotenv').config();
 const W3GReplay = require('w3gjs').default
 const Discord = require('discord.js');
 const thebot = new Discord.Client();
 const fs = require('fs');
 const parser = new W3GReplay();
+const TOKEN = process.env.TOKEN;
 
-
-thebot.login("Nzk4MDAyMjAzMjQzMDUzMTA2.X_urdw.8W4hjMdgEyYTX6UfcVtcx-uvS5g");
+thebot.login(TOKEN);
 
 thebot.on('ready', () => {
   console.log("connected");
