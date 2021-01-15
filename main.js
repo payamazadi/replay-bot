@@ -29,7 +29,7 @@ let numLosses = 0;
 thebot.login(TOKEN);
 
 thebot.on('ready', () => {
-  console.log("Discord connected wuuuuuut");
+  console.log("Discord connected");
   thebot.channels.cache.get(channelId).send("Starting gaming session.");
 
   //only triggers for the first game
@@ -41,11 +41,12 @@ thebot.on('ready', () => {
 })
 
 function replayChanged(path, event){
-  console.log(event);
+  if(testing === 1) console.log(event);
 
   try{
     parseReplay();
   } catch(err){
+    console.log("Error parsing replay");
     console.log(err);
   }
 }
@@ -66,7 +67,7 @@ async function parseReplay(){
 
     //Parse replay
     let result = await parser.parse(REPLAYLOCATION);
-    console.log(result);
+    if(testing === 1) console.log(result);
 
     //Calculate game time averages
     numSessionGames ++;
@@ -139,6 +140,7 @@ async function parseReplay(){
     thebot.channels.cache.get(channelId).send(message);
 
   } catch(err){
+    console.log("Error in body of parseReplay (message sending etc)");
     console.log(err);
   }
 }
@@ -155,8 +157,8 @@ const getProfile = (profile) => {
       });
   } catch(err){
       if(err.response != 200)
+        console.log("Error getting results from profile.w3booster.com, HTTP status !== 200")
         console.log(err);
-        console.log("SSDFSDF\NSDFSDFSDF\NSDFSDFSDF\NSDFSDFSDF\NSDFSDFSDF\NSDFSDFSD")
         return null;
   }
 };
