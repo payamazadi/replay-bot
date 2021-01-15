@@ -56,6 +56,7 @@ async function parseReplay(){
     // parser.on("basic_replay_information", (info) => console.log(info));
     let parser = new W3GReplay();
     const message = new Discord.MessageEmbed();
+    let statsRequestFailed = false;
     let playerNames = "";
     let playerApms = "";
     let playerStats = "";
@@ -79,19 +80,22 @@ async function parseReplay(){
         w3statsPromises.push(getProfile(player.name));
     })
     playerStatsValues = await Promise.all(w3statsPromises);
-    console.log(playerStatsValues);
+    statsRequestFailed = playerStatsValues !== null;
     
     result.players.forEach((player) => {
       if(player.name === myName)
         myTeam = player.teamid;
 
-      let currentPlayerStats = playerStatsValues[counter].data.data;
-      if(currentPlayerStats !== null){
-        let wins = currentPlayerStats.stats.total.wins;
-        let losses = currentPlayerStats.stats.total.losses
-        playerStats += wins + "-" + losses + " (" + ((wins / (wins + losses))*100).toFixed(2) + "%)\n";
-      } else {
-        playerStats += "\n";
+      if(!statsRequestFailed){
+        let currentPlayerStats = playerStatsValues[counter].data.data;
+        if(currentPlayerStats !== null){
+          let wins = currentPlayerStats.stats.total.wins;
+          let losses = currentPlayerStats.stats.total.losses
+          playerStats += wins + "-" + losses + " (" + ((wins / (wins + losses))*100).toFixed(2) + "%)\n";
+          
+        } else {
+          playerStats += "(Failed)\n";
+        }
       }
       
       playerNames += "[" + player.name + "](http://profile.w3booster.com/#" + player.name + ")";
@@ -152,7 +156,9 @@ const getProfile = (profile) => {
           headers: headers
       });
   } catch(err){
-      console.log(err);
+      if(err.response != 200)
+        console.log(err);
+        return null;
   }
 };
 
