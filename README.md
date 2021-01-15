@@ -1,5 +1,5 @@
 # War3 Replay Bot
-This is a Node application that uses chokidar (like fswatch but better) to monitor the LastReplay.w3g file in your replays folder. Whenever the file is updated (i.e. you just finished a game), the replay is parsed using PBug90's [w3gjs Node-based replay parser](https://github.com/PBug90/w3gjs).
+This is a Node application that uses [chokidar](https://github.com/paulmillr/chokidar) (like fswatch but better) to monitor the LastReplay.w3g file in your replays folder. Whenever the file is updated (i.e. you just finished a game), the replay is parsed using PBug90's [w3gjs Node-based replay parser](https://github.com/PBug90/w3gjs).
 
 The use case is for individuals or teams who want to keep track of their gaming session via Discord in an automated way. When first launched, it will connect to Discord as a bot, using a bot token. After the replay is parsed, a message will be created which pulls out the players and their APM, as well as game length and winners. We do a lookup against Pad's [stat's checker](http://profile.w3booster.com/). Nobody knows how he gets that data to begin with and include each player's stats in the message. In a session, you'll get messages like this:
 
