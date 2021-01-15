@@ -4,19 +4,19 @@ const W3GReplay = require('w3gjs').default
 const Discord = require('discord.js');
 const axios = require('axios');
 
-const TOKEN = process.env.TOKEN;
 const thebot = new Discord.Client();
 
-const testing = 1;
+const TOKEN = process.env.TOKEN;
+const REPLAYLOCATION = process.env.REPLAYLOCATION;
+const PLAYERNAME = process.env.PLAYERNAME;
 
-const replayLocation = "C:\\Users\\azadi\\Documents\\Warcraft III\\BattleNet\\313045227\\Replays\\LastReplay.w3g";
-const myName = "azadismind#1665";
+const testing = 0;
 
 let channelId = 0;
 if(testing == 1) {
-  channelId = "798428548108386305";
+  channelId = process.env.TESTINGCHANNELID;
 } else {
-  channelId = "798002085206556695";
+  channelId = process.env.REALCHANNELID;
 }
 
 let myTeam = -1;
@@ -25,7 +25,6 @@ let totalSessionDuration = 0;
 let longestGame = 0;
 let numWins = 0;
 let numLosses = 0;
-let win = false;
 
 thebot.login(TOKEN);
 
@@ -34,11 +33,11 @@ thebot.on('ready', () => {
   thebot.channels.cache.get(channelId).send("Starting gaming session.");
 
   //only triggers for the first game
-  chokidar.watch(replayLocation).on('change', replayChanged);
+  chokidar.watch(REPLAYLOCATION).on('change', replayChanged);
   //only triggers for subsequent games *shrug*
-  chokidar.watch(replayLocation).on('unlink', replayChanged);
+  chokidar.watch(REPLAYLOCATION).on('unlink', replayChanged);
   if(testing == 1)
-    chokidar.watch(replayLocation).on('add', replayChanged);
+    chokidar.watch(REPLAYLOCATION).on('add', replayChanged);
 })
 
 function replayChanged(path, event){
@@ -66,7 +65,7 @@ async function parseReplay(){
     var counter = 0;
 
     //Parse replay
-    let result = await parser.parse(replayLocation);
+    let result = await parser.parse(REPLAYLOCATION);
     console.log(result);
 
     //Calculate game time averages
@@ -80,10 +79,10 @@ async function parseReplay(){
         w3statsPromises.push(getProfile(player.name));
     })
     playerStatsValues = await Promise.all(w3statsPromises);
-    statsRequestFailed = playerStatsValues !== null;
+    statsRequestFailed = playerStatsValues === null;
     
     result.players.forEach((player) => {
-      if(player.name === myName)
+      if(player.name === PLAYERNAME)
         myTeam = player.teamid;
 
       if(!statsRequestFailed){
@@ -92,10 +91,9 @@ async function parseReplay(){
           let wins = currentPlayerStats.stats.total.wins;
           let losses = currentPlayerStats.stats.total.losses
           playerStats += wins + "-" + losses + " (" + ((wins / (wins + losses))*100).toFixed(2) + "%)\n";
-          
-        } else {
-          playerStats += "(Failed)\n";
         }
+      } else {
+        playerStats += "(Failed)\n";
       }
       
       playerNames += "[" + player.name + "](http://profile.w3booster.com/#" + player.name + ")";
@@ -158,6 +156,7 @@ const getProfile = (profile) => {
   } catch(err){
       if(err.response != 200)
         console.log(err);
+        console.log("SSDFSDF\NSDFSDFSDF\NSDFSDFSDF\NSDFSDFSDF\NSDFSDFSDF\NSDFSDFSD")
         return null;
   }
 };
