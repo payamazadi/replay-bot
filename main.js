@@ -56,7 +56,6 @@ async function parseReplay(){
     // parser.on("basic_replay_information", (info) => console.log(info));
     let parser = new W3GReplay();
     const message = new Discord.MessageEmbed();
-    let statsRequestFailed = false;
     let playerNames = "";
     let playerApms = "";
     let playerStats = "";
@@ -80,13 +79,12 @@ async function parseReplay(){
         w3statsPromises.push(getProfile(player.name));
     })
     playerStatsValues = await Promise.all(w3statsPromises);
-    statsRequestFailed = playerStatsValues === null;
     
     result.players.forEach((player) => {
       if(player.name === PLAYERNAME)
         myTeam = player.teamid;
 
-      if(!statsRequestFailed){
+      if(! (playerStatsValues === null)){
         let currentPlayerStats = playerStatsValues[counter].data.data;
         if(currentPlayerStats !== null){
           let wins = currentPlayerStats.stats.total.wins;
